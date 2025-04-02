@@ -17,10 +17,10 @@
     <b>Tongyi Lab - <a href="https://github.com/Wan-Video/Wan2.1"><img src='https://ali-vilab.github.io/VACE-Page/assets/logos/wan_logo.png' alt='wan_logo' style='margin-bottom: -4px; height: 20px;'></a> </b>
     <br>
     <br>
-        <a href="https://arxiv.org/abs/2503.07598"><img src='https://img.shields.io/badge/arXiv-VACE-red' alt='Paper PDF'></a>
-        <a href="https://ali-vilab.github.io/VACE-Page/"><img src='https://img.shields.io/badge/Project_Page-VACE-green' alt='Project Page'></a>
-        <a href="https://huggingface.co/ali-vilab/VACE-Wan2.1-1.3B-Preview"><img src='https://img.shields.io/badge/Model-VACE-yellow'></a>
-        <a href="https://modelscope.cn/collections/VACE-8fa5fcfd386e43"><img src='https://img.shields.io/badge/VACE-ModelScope-purple'></a>
+        <a href="https://arxiv.org/abs/2503.07598"><img src='https://img.shields.io/badge/VACE-arXiv-red' alt='Paper PDF'></a>
+        <a href="https://ali-vilab.github.io/VACE-Page/"><img src='https://img.shields.io/badge/VACE-Project_Page-green' alt='Project Page'></a>
+        <a href="https://huggingface.co/collections/ali-vilab/vace-67eca186ff3e3564726aff38"><img src='https://img.shields.io/badge/VACE-HuggingFace_Model-yellow'></a>
+        <a href="https://modelscope.cn/collections/VACE-8fa5fcfd386e43"><img src='https://img.shields.io/badge/VACE-ModelScope_Model-purple'></a>
     <br>
 </p>
 
@@ -32,7 +32,7 @@
 
 
 ## 🎉 News
-- [x] Mar 31, 2025: 🔥[VACE-Wan2.1-1.3B-Preview](https://huggingface.co/ali-vilab/VACE-Wan2.1-1.3B-Preview) and [VACE-LTX-Video-0.9](https://huggingface.co/ali-vilab/VACE-LTX-Video-0.9) models are now available at HuggingFace and [ModelScope](https://modelscope.cn/collections/VACE-8fa5fcfd386e43)!
+- [x] Mar 31, 2025: 🔥VACE-Wan2.1-1.3B-Preview and VACE-LTX-Video-0.9 models are now available at [HuggingFace](https://huggingface.co/collections/ali-vilab/vace-67eca186ff3e3564726aff38) and [ModelScope](https://modelscope.cn/collections/VACE-8fa5fcfd386e43)!
 - [x] Mar 31, 2025: 🔥Release code of model inference, preprocessing, and gradio demos. 
 - [x] Mar 11, 2025: We propose [VACE](https://ali-vilab.github.io/VACE-Page/), an all-in-one model for video creation and editing.
 
@@ -71,7 +71,7 @@ pip install -r requirements/annotator.txt
 Please download [VACE-Annotators](https://huggingface.co/ali-vilab/VACE-Annotators) to `<repo-root>/models/`.
 
 ### Local Directories Setup
-It is recommended to download [VACE-Benchmark](https://huggingface.co/ali-vilab) to `<repo-root>/benchmarks/` as examples in `run_vace_xxx.sh`.
+It is recommended to download [VACE-Benchmark](https://huggingface.co/datasets/ali-vilab/VACE-Benchmark) to `<repo-root>/benchmarks/` as examples in `run_vace_xxx.sh`.
 
 We recommend to organize local directories as:
 ```angular2html
