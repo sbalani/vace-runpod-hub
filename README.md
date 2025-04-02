@@ -20,6 +20,7 @@
         <a href="https://arxiv.org/abs/2503.07598"><img src='https://img.shields.io/badge/arXiv-VACE-red' alt='Paper PDF'></a>
         <a href="https://ali-vilab.github.io/VACE-Page/"><img src='https://img.shields.io/badge/Project_Page-VACE-green' alt='Project Page'></a>
         <a href="https://huggingface.co/ali-vilab/VACE-Wan2.1-1.3B-Preview"><img src='https://img.shields.io/badge/Model-VACE-yellow'></a>
+        <a href="https://modelscope.cn/collections/VACE-8fa5fcfd386e43"><img src='https://img.shields.io/badge/VACE-ModelScope-purple'></a>
     <br>
 </p>
 
