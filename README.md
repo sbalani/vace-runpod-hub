@@ -31,7 +31,7 @@
 
 
 ## 🎉 News
-- [x] Mar 31, 2025: 🔥[VACE-Wan2.1-1.3B-Preview](https://huggingface.co/ali-vilab/VACE-Wan2.1-1.3B-Preview) and [VACE-LTX-Video-0.9](https://huggingface.co/ali-vilab/VACE-LTX-Video-0.9) models are now available at HuggingFace!
+- [x] Mar 31, 2025: 🔥[VACE-Wan2.1-1.3B-Preview](https://huggingface.co/ali-vilab/VACE-Wan2.1-1.3B-Preview) and [VACE-LTX-Video-0.9](https://huggingface.co/ali-vilab/VACE-LTX-Video-0.9) models are now available at HuggingFace and [ModelScope](https://modelscope.cn/collections/VACE-8fa5fcfd386e43)!
 - [x] Mar 31, 2025: 🔥Release code of model inference, preprocessing, and gradio demos. 
 - [x] Mar 11, 2025: We propose [VACE](https://ali-vilab.github.io/VACE-Page/), an all-in-one model for video creation and editing.
 
@@ -39,10 +39,10 @@
 ## 🪄 Models
 | Models                   | Download Link                                                                                                                                                                           | Video Size          | License                                                                                       |
 |--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|-----------------------------------------------------------------------------------------------|
-| VACE-Wan2.1-1.3B-Preview | [Huggingface](https://huggingface.co/ali-vilab/VACE-Wan2.1-1.3B-Preview) 🤗                                                                                                                                                                      | ~ 81 x 480 x 832    | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B/blob/main/LICENSE.txt)             |
+| VACE-Wan2.1-1.3B-Preview | [Huggingface](https://huggingface.co/ali-vilab/VACE-Wan2.1-1.3B-Preview) 🤗  [ModelScope](https://modelscope.cn/models/iic/VACE-Wan2.1-1.3B-Preview) 🤖                                                                                                                                                                   | ~ 81 x 480 x 832    | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B/blob/main/LICENSE.txt)             |
 | VACE-Wan2.1-1.3B         | [To be released](https://github.com/Wan-Video) <img src='https://ali-vilab.github.io/VACE-Page/assets/logos/wan_logo.png' alt='wan_logo' style='margin-bottom: -4px; height: 15px;'>  | ~ 81 x 480 x 832    | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B/blob/main/LICENSE.txt)             |
 | VACE-Wan2.1-14B          | [To be released](https://github.com/Wan-Video) <img src='https://ali-vilab.github.io/VACE-Page/assets/logos/wan_logo.png' alt='wan_logo' style='margin-bottom: -4px; height: 15px;'>  | ~ 81 x 720 x 1080   | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-14B/blob/main/LICENSE.txt)             |
-| VACE-LTX-Video-0.9       | [Huggingface](https://huggingface.co/ali-vilab/VACE-LTX-Video-0.9) 🤗                                                                                                                                                                      | ~ 97 x 512 x 768    | [RAIL-M](https://huggingface.co/Lightricks/LTX-Video/blob/main/ltx-video-2b-v0.9.license.txt) |
+| VACE-LTX-Video-0.9       | [Huggingface](https://huggingface.co/ali-vilab/VACE-LTX-Video-0.9) 🤗     [ModelScope](https://modelscope.cn/models/iic/VACE-LTX-Video-0.9) 🤖                                                                                                                                                                   | ~ 97 x 512 x 768    | [RAIL-M](https://huggingface.co/Lightricks/LTX-Video/blob/main/ltx-video-2b-v0.9.license.txt) |
 
 - The input supports any resolution, but to achieve optimal results, the video size should fall within a specific range.
 - All models inherit the license of the original model.
