@@ -81,6 +81,7 @@ image_salient_anno.OUTPUTS = {"image": None}
 image_inpainting_anno = EasyDict()
 image_inpainting_anno.NAME = "InpaintingAnnotator"
 image_inpainting_anno.MODE = "all"
+image_inpainting_anno.USE_AUG = True
 image_inpainting_anno.SALIENT = {"PRETRAINED_MODEL": "models/VACE-Annotators/salient/u2net.pt"}
 image_inpainting_anno.GDINO = {"TOKENIZER_PATH": "models/VACE-Annotators/gdino/bert-base-uncased",
                                "CONFIG_PATH": "models/VACE-Annotators/gdino/GroundingDINO_SwinT_OGC_mod.py",
@@ -90,7 +91,7 @@ image_inpainting_anno.SAM2 = {"CONFIG_PATH": 'models/VACE-Annotators/sam2/config
 # image_inpainting_anno.INPUTS = {"image": None, "mode": "salient"}
 # image_inpainting_anno.INPUTS = {"image": None, "mask": None, "mode": "mask"}
 # image_inpainting_anno.INPUTS = {"image": None, "bbox": None, "mode": "bbox"}
-image_inpainting_anno.INPUTS = {"image": None, "mode": "salientmasktrack"}
+image_inpainting_anno.INPUTS = {"image": None, "mode": "salientmasktrack", "mask_cfg": None}
 # image_inpainting_anno.INPUTS = {"image": None, "mode": "salientbboxtrack"}
 # image_inpainting_anno.INPUTS = {"image": None, "mask": None, "mode": "masktrack"}
 # image_inpainting_anno.INPUTS = {"image": None, "bbox": None, "mode": "bboxtrack"}

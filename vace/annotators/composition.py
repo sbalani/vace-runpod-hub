@@ -120,16 +120,17 @@ class ExpandAnythingAnnotator:
     def forward(self, images=None, mode=None, return_mask=None, mask_cfg=None, direction=None, expand_ratio=None, expand_num=None):
         ret_data = {}
         expand_image, reference_image= images[0], images[1:]
+        mode = mode.split(',') if ',' in mode else ['firstframe', mode]
 
         outpainting_data = self.outpainting_ins.forward(expand_image,expand_ratio=expand_ratio, direction=direction)
         outpainting_image, outpainting_mask = outpainting_data['image'], outpainting_data['mask']
 
-        frameref_data = self.frameref_ins.forward(outpainting_image,  mode='firstframe', expand_num=expand_num)
+        frameref_data = self.frameref_ins.forward(outpainting_image,  mode=mode[0], expand_num=expand_num)
         frames, masks = frameref_data['frames'], frameref_data['masks']
         masks[0] = outpainting_mask
         ret_data.update({"frames": frames, "masks": masks})
 
-        ret_ref_data = self.ref_ins.forward(images=reference_image, mode=mode, return_mask=return_mask, mask_cfg=mask_cfg)
+        ret_ref_data = self.ref_ins.forward(images=reference_image, mode=mode[1], return_mask=return_mask, mask_cfg=mask_cfg)
         ret_data.update({"images": ret_ref_data['images']})
 
         return ret_data

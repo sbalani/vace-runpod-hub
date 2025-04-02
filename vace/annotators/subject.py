@@ -20,11 +20,14 @@ class SubjectAnnotator:
         if self.use_aug:
             from .maskaug import MaskAugAnnotator
             self.maskaug_anno = MaskAugAnnotator(cfg={})
-        assert self.mode in ["salient", "mask", "bbox", "salientmasktrack", "salientbboxtrack", "masktrack",
+        assert self.mode in ["plain", "salient", "mask", "bbox", "salientmasktrack", "salientbboxtrack", "masktrack",
                              "bboxtrack", "label", "caption", "all"]
 
     def forward(self, image=None, mode=None, return_mask=None, mask_cfg=None, mask=None, bbox=None, label=None, caption=None):
         return_mask = return_mask if return_mask is not None else self.return_mask
+
+        if mode == "plain":
+            return {"image": image, "mask": None} if return_mask else image
 
         inp_res = self.inp_anno.forward(image,  mask=mask, bbox=bbox, label=label, caption=caption, mode=mode, return_mask=True, return_source=True)
         src_image = inp_res['src_image']

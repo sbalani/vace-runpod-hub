@@ -228,39 +228,45 @@ def main(args):
     ret_data = {}
     if 'frames' in output_params:
         frames =  results['frames'] if isinstance(results, dict) else results
-        save_path = os.path.join(pre_save_dir, f'src_video-{task_name}.mp4')
-        save_one_video(save_path, frames, fps=save_fps)
-        print(f"Save frames result to {save_path}")
-        ret_data['src_video'] = save_path
+        if frames is not None:
+            save_path = os.path.join(pre_save_dir, f'src_video-{task_name}.mp4')
+            save_one_video(save_path, frames, fps=save_fps)
+            print(f"Save frames result to {save_path}")
+            ret_data['src_video'] = save_path
     if 'masks' in output_params:
         frames = results['masks'] if isinstance(results, dict) else results
-        save_path = os.path.join(pre_save_dir, f'src_mask-{task_name}.mp4')
-        save_one_video(save_path, frames, fps=save_fps)
-        print(f"Save frames result to {save_path}")
-        ret_data['src_mask'] = save_path
+        if frames is not None:
+            save_path = os.path.join(pre_save_dir, f'src_mask-{task_name}.mp4')
+            save_one_video(save_path, frames, fps=save_fps)
+            print(f"Save frames result to {save_path}")
+            ret_data['src_mask'] = save_path
     if 'image' in output_params:
         ret_image =  results['image'] if isinstance(results, dict) else results
-        save_path = os.path.join(pre_save_dir, f'src_ref_image-{task_name}.png')
-        save_one_image(save_path, ret_image, use_type='pil')
-        print(f"Save image result to {save_path}")
-        ret_data['src_ref_images'] = save_path
+        if ret_image is not None:
+            save_path = os.path.join(pre_save_dir, f'src_ref_image-{task_name}.png')
+            save_one_image(save_path, ret_image, use_type='pil')
+            print(f"Save image result to {save_path}")
+            ret_data['src_ref_images'] = save_path
     if 'images' in output_params:
         ret_images = results['images'] if isinstance(results, dict) else results
-        src_ref_images = []
-        for i, img in enumerate(ret_images):
-            save_path = os.path.join(pre_save_dir, f'src_ref_image_{i}-{task_name}.png')
-            save_one_image(save_path, img, use_type='pil')
-            print(f"Save image result to {save_path}")
-            src_ref_images.append(save_path)
-        if len(src_ref_images) > 0:
-            ret_data['src_ref_images'] = ','.join(src_ref_images)
-        else:
-            ret_data['src_ref_images'] = None
+        if ret_images is not None:
+            src_ref_images = []
+            for i, img in enumerate(ret_images):
+                if img is not None:
+                    save_path = os.path.join(pre_save_dir, f'src_ref_image_{i}-{task_name}.png')
+                    save_one_image(save_path, img, use_type='pil')
+                    print(f"Save image result to {save_path}")
+                    src_ref_images.append(save_path)
+            if len(src_ref_images) > 0:
+                ret_data['src_ref_images'] = ','.join(src_ref_images)
+            else:
+                ret_data['src_ref_images'] = None
     if 'mask' in output_params:
         ret_image =  results['mask'] if isinstance(results, dict) else results
-        save_path = os.path.join(pre_save_dir, f'src_mask-{task_name}.png')
-        save_one_image(save_path, ret_image, use_type='pil')
-        print(f"Save mask result to {save_path}")
+        if ret_image is not None:
+            save_path = os.path.join(pre_save_dir, f'src_mask-{task_name}.png')
+            save_one_image(save_path, ret_image, use_type='pil')
+            print(f"Save mask result to {save_path}")
     return ret_data
 
 

@@ -12,6 +12,7 @@ from .utils import convert_to_numpy, convert_to_pil, single_rle_to_mask, get_mas
 
 class InpaintingAnnotator:
     def __init__(self, cfg, device=None):
+        self.use_aug = cfg.get('USE_AUG', True)
         self.return_mask = cfg.get('RETURN_MASK', True)
         self.return_source = cfg.get('RETURN_SOURCE', True)
         self.mask_color = cfg.get('MASK_COLOR', 128)
@@ -35,6 +36,9 @@ class InpaintingAnnotator:
             self.salient_model = SalientAnnotator(cfg['SALIENT'], device=device)
             self.gdino_model = GDINOAnnotator(cfg['GDINO'], device=device)
             self.sam2_model = SAM2ImageAnnotator(cfg['SAM2'], device=device)
+        if self.use_aug:
+            from .maskaug import MaskAugAnnotator
+            self.maskaug_anno = MaskAugAnnotator(cfg={})
 
     def apply_plain_mask(self, image, mask, mask_color):
         bool_mask = mask > 0
@@ -43,14 +47,16 @@ class InpaintingAnnotator:
         out_mask = np.where(bool_mask, 255, 0).astype(np.uint8)
         return out_image, out_mask
         
-    def apply_seg_mask(self, image, mask, mask_color):
+    def apply_seg_mask(self, image, mask, mask_color, mask_cfg=None):
         out_mask = (mask * 255).astype('uint8')
+        if self.use_aug and mask_cfg is not None:
+            out_mask = self.maskaug_anno.forward(out_mask, mask_cfg)
         bool_mask = out_mask > 0
         out_image = image.copy()
         out_image[bool_mask] = mask_color
         return out_image, out_mask
         
-    def forward(self, image=None, mask=None, bbox=None, label=None, caption=None, mode=None, return_mask=None, return_source=None, mask_color=None):
+    def forward(self, image=None, mask=None, bbox=None, label=None, caption=None, mode=None, return_mask=None, return_source=None, mask_color=None, mask_cfg=None):
         mode = mode if mode is not None else self.mode
         return_mask = return_mask if return_mask is not None else self.return_mask
         return_source = return_source if return_source is not None else self.return_source
@@ -80,25 +86,25 @@ class InpaintingAnnotator:
             mask = self.salient_model.forward(image)
             resize_mask = cv2.resize(mask, (256, 256), interpolation=cv2.INTER_NEAREST)
             out_mask = self.sam2_model.forward(image=image, mask=resize_mask, task_type='mask', return_mask=True)
-            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color)
+            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color, mask_cfg)
         elif mode in ['salientbboxtrack']:
             mask = self.salient_model.forward(image)
             bbox = get_mask_box(np.array(mask), threshold=1)
             out_mask = self.sam2_model.forward(image=image, input_box=bbox, task_type='input_box', return_mask=True)
-            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color)
+            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color, mask_cfg)
         elif mode in ['maskpointtrack']:
             out_mask = self.sam2_model.forward(image=image, mask=mask, task_type='mask_point', return_mask=True)
-            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color)
+            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color, mask_cfg)
         elif mode in ['maskbboxtrack']:
             out_mask = self.sam2_model.forward(image=image, mask=mask, task_type='mask_box', return_mask=True)
-            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color)
+            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color, mask_cfg)
         elif mode in ['masktrack']:
             resize_mask = cv2.resize(mask, (256, 256), interpolation=cv2.INTER_NEAREST)
             out_mask = self.sam2_model.forward(image=image, mask=resize_mask, task_type='mask', return_mask=True)
-            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color)
+            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color, mask_cfg)
         elif mode in ['bboxtrack']:
             out_mask = self.sam2_model.forward(image=image, input_box=bbox, task_type='input_box', return_mask=True)
-            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color)
+            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color, mask_cfg)
         elif mode in ['label']:
             gdino_res = self.gdino_model.forward(image, classes=label)
             if 'boxes' in gdino_res and len(gdino_res['boxes']) > 0:
@@ -106,7 +112,7 @@ class InpaintingAnnotator:
             else:
                 raise ValueError(f"Unable to find the corresponding boxes of label: {label}")
             out_mask = self.sam2_model.forward(image=image, input_box=bboxes, task_type='input_box', return_mask=True)
-            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color)
+            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color, mask_cfg)
         elif mode in ['caption']:
             gdino_res = self.gdino_model.forward(image, caption=caption)
             if 'boxes' in gdino_res and len(gdino_res['boxes']) > 0:
@@ -114,7 +120,7 @@ class InpaintingAnnotator:
             else:
                 raise ValueError(f"Unable to find the corresponding boxes of caption: {caption}")
             out_mask = self.sam2_model.forward(image=image, input_box=bboxes, task_type='input_box', return_mask=True)
-            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color)
+            out_image, out_mask = self.apply_seg_mask(image, out_mask, mask_color, mask_cfg)
 
         ret_data = {"image": out_image}
         if return_mask:
@@ -180,6 +186,7 @@ class InpaintingVideoAnnotator:
             sub_mask = out_masks[i]
             if self.use_aug and mask_cfg is not None:
                 sub_mask = self.maskaug_anno.forward(sub_mask, mask_cfg)
+                out_masks[i] = sub_mask
             bool_mask = sub_mask > 0
             masked_frame = frames[i].copy()
             masked_frame[bool_mask] = mask_color
