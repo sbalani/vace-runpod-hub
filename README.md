@@ -41,9 +41,9 @@
 | Models                   | Download Link                                                                                                                                                                           | Video Size          | License                                                                                       |
 |--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|-----------------------------------------------------------------------------------------------|
 | VACE-Wan2.1-1.3B-Preview | [Huggingface](https://huggingface.co/ali-vilab/VACE-Wan2.1-1.3B-Preview) 🤗  [ModelScope](https://modelscope.cn/models/iic/VACE-Wan2.1-1.3B-Preview) 🤖                                                                                                                                                                   | ~ 81 x 480 x 832    | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B/blob/main/LICENSE.txt)             |
-| VACE-Wan2.1-1.3B         | [To be released](https://github.com/Wan-Video) <img src='https://ali-vilab.github.io/VACE-Page/assets/logos/wan_logo.png' alt='wan_logo' style='margin-bottom: -4px; height: 15px;'>  | ~ 81 x 480 x 832    | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B/blob/main/LICENSE.txt)             |
-| VACE-Wan2.1-14B          | [To be released](https://github.com/Wan-Video) <img src='https://ali-vilab.github.io/VACE-Page/assets/logos/wan_logo.png' alt='wan_logo' style='margin-bottom: -4px; height: 15px;'>  | ~ 81 x 720 x 1080   | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-14B/blob/main/LICENSE.txt)             |
 | VACE-LTX-Video-0.9       | [Huggingface](https://huggingface.co/ali-vilab/VACE-LTX-Video-0.9) 🤗     [ModelScope](https://modelscope.cn/models/iic/VACE-LTX-Video-0.9) 🤖                                                                                                                                                                   | ~ 97 x 512 x 768    | [RAIL-M](https://huggingface.co/Lightricks/LTX-Video/blob/main/ltx-video-2b-v0.9.license.txt) |
+| Wan2.1-VACE-1.3B             | [To be released](https://github.com/Wan-Video) <img src='https://ali-vilab.github.io/VACE-Page/assets/logos/wan_logo.png' alt='wan_logo' style='margin-bottom: -4px; height: 15px;'>  | ~ 81 x 480 x 832    | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B/blob/main/LICENSE.txt)             |
+| Wan2.1-VACE-14B          | [To be released](https://github.com/Wan-Video) <img src='https://ali-vilab.github.io/VACE-Page/assets/logos/wan_logo.png' alt='wan_logo' style='margin-bottom: -4px; height: 15px;'>  | ~ 81 x 720 x 1080   | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-14B/blob/main/LICENSE.txt)             |
 
 - The input supports any resolution, but to achieve optimal results, the video size should fall within a specific range.
 - All models inherit the license of the original model.
@@ -118,7 +118,7 @@ The output video together with intermediate video, mask and images will be saved
 
 #### 2) Preprocessing
 To have more flexible control over the input, before VACE model inference, user inputs need to be preprocessed into `src_video`, `src_mask`, and `src_ref_images` first.
-We assign each [preprocessor](vace/configs/__init__.py) a task name, so simply call [`vace_preprocess.py`](vace/vace_preproccess.py) and specify the task name and task params. For example:
+We assign each [preprocessor](./vace/configs/__init__.py) a task name, so simply call [`vace_preprocess.py`](./vace/vace_preproccess.py) and specify the task name and task params. For example:
 ```angular2html
 # process video depth
 python vace/vace_preproccess.py --task depth --video assets/videos/test.mp4
@@ -126,12 +126,12 @@ python vace/vace_preproccess.py --task depth --video assets/videos/test.mp4
 # process video inpainting by providing bbox
 python vace/vace_preproccess.py --task inpainting --mode bbox --bbox 50,50,550,700 --video assets/videos/test.mp4
 ```
-The outputs will be saved to `./proccessed/` by default.
+The outputs will be saved to `./processed/` by default.
 
 > 💡**Note**:
 > Please refer to [run_vace_pipeline.sh](./run_vace_pipeline.sh) preprocessing methods for different tasks.
-Moreover, refer to [vace/configs/](vace/configs/) for all the pre-defined tasks and required params.
-You can also customize preprocessors by implementing at [`annotators`](vace/annotators/__init__.py) and register them at [`configs`](vace/configs).
+Moreover, refer to [vace/configs/](./vace/configs/) for all the pre-defined tasks and required params.
+You can also customize preprocessors by implementing at [`annotators`](./vace/annotators/__init__.py) and register them at [`configs`](./vace/configs).
 
 
 #### 3) Model inference
@@ -150,10 +150,10 @@ python vace/vace_ltx_inference.py --ckpt_path <path-to-model> --text_encoder_pat
 The output video together with intermediate video, mask and images will be saved into `./results/` by default.
 
 > 💡**Note**: 
-> (1) Please refer to [vace/vace_wan_inference.py](vace/vace_wan_inference.py) and [vace/vace_ltx_inference.py](vace/vace_ltx_inference.py) for the inference args.
+> (1) Please refer to [vace/vace_wan_inference.py](./vace/vace_wan_inference.py) and [vace/vace_ltx_inference.py](./vace/vace_ltx_inference.py) for the inference args.
 > (2) For LTX-Video and English language Wan2.1 users, you need prompt extension to unlock the full model performance. 
 Please follow the [instruction of Wan2.1](https://github.com/Wan-Video/Wan2.1?tab=readme-ov-file#2-using-prompt-extension) and set `--use_prompt_extend` while running inference.
-
+> (3) When performing prompt extension in editing tasks, it's important to pay attention to the results of expanding plain text. Since the visual information being input is unknown, this may lead to the extended output not matching the video being edited, which can affect the final outcome.
 
 ### Inference Gradio
 For preprocessors, run 
