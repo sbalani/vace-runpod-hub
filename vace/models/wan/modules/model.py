@@ -87,6 +87,7 @@ class VaceWanModel(WanModel):
                  qk_norm=True,
                  cross_attn_norm=True,
                  eps=1e-6):
+        model_type = "t2v"   # TODO: Hard code for both preview and official versions.
         super().__init__(model_type, patch_size, text_len, in_dim, dim, ffn_dim, freq_dim, text_dim, out_dim,
                          num_heads, num_layers, window_size, qk_norm, cross_attn_norm, eps)
 

@@ -253,6 +253,41 @@ def read_video_one_frame(video_path, use_type='cv2', is_rgb=True):
     return image_first
 
 
+def read_video_last_frame(video_path, use_type='cv2', is_rgb=True):
+    image_last = None
+    if use_type == "decord":
+        import decord
+        decord.bridge.set_bridge("native")
+        try:
+            cap = decord.VideoReader(video_path)
+            if len(cap) > 0:  # Check if video has at least one frame
+                image_last = cap[-1].asnumpy()  # Get last frame using negative index
+        except Exception as e:
+            print(f"Decord read error: {e}")
+            return None
+    elif use_type == "cv2":
+        try:
+            cap = cv2.VideoCapture(video_path)
+            # Get total frame count
+            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            if total_frames > 0:
+                # Set position to last frame
+                cap.set(cv2.CAP_PROP_POS_FRAMES, total_frames - 1)
+                ret, frame = cap.read()
+                if ret:  # Check if frame was read successfully
+                    if is_rgb:
+                        image_last = frame[..., ::-1]
+                    else:
+                        image_last = frame
+            cap.release()
+        except Exception as e:
+            print(f"OpenCV read error: {e}")
+            return None
+    else:
+        raise ValueError(f"Unknown video type {use_type}")
+    return image_last
+
+
 def align_frames(first_frame, last_frame):
     h1, w1 = first_frame.shape[:2]
     h2, w2 = last_frame.shape[:2]

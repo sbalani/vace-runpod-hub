@@ -17,7 +17,7 @@ import tempfile
 from pycocotools import mask as mask_utils
 
 sys.path.insert(0, os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-3]))
-from vace.annotators.utils import single_rle_to_mask, read_video_frames, save_one_video, read_video_one_frame
+from vace.annotators.utils import single_rle_to_mask, read_video_frames, save_one_video, read_video_one_frame, read_video_last_frame
 from vace.configs import VACE_IMAGE_PREPROCCESS_CONFIGS, VACE_IMAGE_MASK_PREPROCCESS_CONFIGS, VACE_IMAGE_MASKAUG_PREPROCCESS_CONFIGS, VACE_VIDEO_PREPROCCESS_CONFIGS, VACE_VIDEO_MASK_PREPROCCESS_CONFIGS, VACE_VIDEO_MASKAUG_PREPROCCESS_CONFIGS, VACE_COMPOSITION_PREPROCCESS_CONFIGS
 import vace.annotators as annotators
 
@@ -326,7 +326,7 @@ class VACEVideoTag():
             os.makedirs(self.save_dir)
 
         self.video_anno_processor = {}
-        self.load_video_anno_list = ["plain", "depth", "flow", "gray", "pose", "scribble", "outpainting", "outpainting_inner", "framerefext"]
+        self.load_video_anno_list = ["plain", "depth", "depthv2", "flow", "gray", "pose", "pose_body", "scribble", "outpainting", "outpainting_inner", "framerefext"]
         for anno_name, anno_cfg in copy.deepcopy(VACE_VIDEO_PREPROCCESS_CONFIGS).items():
             if anno_name not in self.load_video_anno_list: continue
             class_name = anno_cfg.pop("NAME")
@@ -366,8 +366,12 @@ class VACEVideoTag():
                     label="input_process_video",
                     sources=['upload'],
                     interactive=True)
-                self.input_process_image_show = gr.Image(
-                    label="input_process_image_show",
+                self.input_process_first_image_show = gr.Image(
+                    label="input_process_first_image_show",
+                    format='png',
+                    interactive=False)
+                self.input_process_last_image_show = gr.Image(
+                    label="input_process_last_image_show",
                     format='png',
                     interactive=False)
             with gr.Column(scale=2):
@@ -545,6 +549,8 @@ class VACEVideoTag():
         if mask_aug_process_type == 'maskaug_layout':
             output_video = self.maskaug_anno_processor[mask_aug_process_type]['anno_ins'].forward(mask_frames, mask_cfg=mask_cfg, label=mask_layout_label)
             mask_aug_frames = [ np.ones_like(submask) * 255 for submask in mask_frames ]
+        elif mask_aug_process_type == 'maskaug':
+            mask_aug_frames = self.maskaug_anno_processor[mask_aug_process_type]['anno_ins'].forward(mask_frames, mask_cfg=mask_cfg)
         else:
             mask_aug_frames = self.maskaug_anno_processor[mask_aug_process_type]['anno_ins'].forward(mask_frames)
 
@@ -631,7 +637,8 @@ class VACEVideoTag():
         inputs = [self.input_process_video, self.input_process_image, self.video_process_type, self.outpainting_direction, self.outpainting_ratio, self.frame_reference_mode, self.frame_reference_num, self.mask_process_type, self.mask_type, self.mask_segtag, self.mask_opacity, self.mask_gray, self.mask_aug_process_type, self.mask_aug_type, self.mask_expand_ratio, self.mask_expand_iters, self.mask_layout_label]
         outputs = [self.output_process_video, self.output_process_masked_video, self.output_process_video_mask]
         self.process_button.click(self.process_video_data, inputs=inputs, outputs=outputs)
-        self.input_process_video.change(read_video_one_frame, inputs=[self.input_process_video], outputs=[self.input_process_image_show])
+        self.input_process_video.change(read_video_one_frame, inputs=[self.input_process_video], outputs=[self.input_process_first_image_show])
+        self.input_process_video.change(read_video_last_frame, inputs=[self.input_process_video], outputs=[self.input_process_last_image_show])
         self.save_button.click(self.save_video_data,
                                inputs=[self.input_process_video, self.input_process_image, self.output_process_video, self.output_process_masked_video, self.output_process_video_mask],
                                outputs=[self.save_log])
@@ -802,7 +809,7 @@ class VACEVideoTool():
         self.save_dir = os.path.join(cfg.save_dir, 'video_tool')
         if not os.path.exists(self.save_dir):
             os.makedirs(self.save_dir)
-        self.process_types = ["expand_frame", "expand_clipframe", "concat_clip", "blank_mask"]
+        self.process_types = ["expand_frame", "expand_blank_clip", "expand_clip_blank", "expand_ff_clip_blank_lf", "concat_clip", "concat_ff_clip_lf", "blank_mask"]
 
     def create_ui_video_tool(self, *args, **kwargs):
         with gr.Row(variant="panel"):
@@ -828,7 +835,7 @@ class VACEVideoTool():
                     interactive=True)
             with gr.Column(scale=1):
                 self.input_process_video_2 = gr.Video(
-                    label="input_process_video_1",
+                    label="input_process_video_2",
                     sources=['upload'],
                     interactive=True)
         with gr.Row(variant="panel"):
@@ -927,13 +934,29 @@ class VACEVideoTool():
             if input_process_image_2 is not None:
                 output_video[-1] = np.array(input_process_image_2.resize((output_width, output_height)))
                 output_mask[-1] = np.zeros((output_height, output_width))
-        elif input_process_type == 'expand_clipframe':
+        elif input_process_type == 'expand_blank_clip':
+            video_frames, fps, width, height, total_frames = read_video_frames(input_process_video_1, use_type='cv2', info=True)
+            frame_rate = fps
+            output_video = [np.ones((height, width, 3), dtype=np.uint8) * 127.5] * num_frames + video_frames
+            output_mask = [np.ones((height, width), dtype=np.uint8) * 255] * num_frames + [np.zeros((height, width), dtype=np.uint8)] * total_frames
+        elif input_process_type == 'expand_clip_blank':
             video_frames, fps, width, height, total_frames = read_video_frames(input_process_video_1, use_type='cv2', info=True)
             frame_rate = fps
             output_video = video_frames + [np.ones((height, width, 3), dtype=np.uint8) * 127.5] * num_frames
             output_mask = [np.zeros((height, width), dtype=np.uint8)] * total_frames + [np.ones((height, width), dtype=np.uint8) * 255] * num_frames
-            output_video[-1] = np.array(input_process_image_2.resize((width, height)))
-            output_mask[-1] = np.zeros((height, width))
+        elif input_process_type == 'expand_ff_clip_blank_lf':
+            video_frames, fps, width, height, total_frames = read_video_frames(input_process_video_1, use_type='cv2', info=True)
+            frame_rate = fps
+            if input_process_image_1 is not None:
+                output_video = [np.ones((height, width, 3), dtype=np.uint8) * 127.5] * num_frames + video_frames
+                output_mask = [np.ones((height, width), dtype=np.uint8) * 255] * num_frames + [np.zeros((height, width), dtype=np.uint8)] * total_frames
+                output_video[0] = np.array(input_process_image_1.resize((width, height)))
+                output_mask[0] = np.zeros((height, width))
+            if input_process_image_2 is not None:
+                output_video = video_frames + [np.ones((height, width, 3), dtype=np.uint8) * 127.5] * num_frames
+                output_mask = [np.zeros((height, width), dtype=np.uint8)] * total_frames + [np.ones((height, width), dtype=np.uint8) * 255] * num_frames
+                output_video[-1] = np.array(input_process_image_2.resize((width, height)))
+                output_mask[-1] = np.zeros((height, width))
         elif input_process_type == 'concat_clip':
             video_frames_1, fps_1, width_1, height_1, total_frames_1 = read_video_frames(input_process_video_1, use_type='cv2', info=True)
             video_frames_2, fps_2, width_2, height_2, total_frames_2 = read_video_frames(input_process_video_2, use_type='cv2', info=True)
@@ -942,6 +965,18 @@ class VACEVideoTool():
             frame_rate = fps_1
             output_video = video_frames_1 + video_frames_2
             output_mask = [np.ones((height_1, width_1), dtype=np.uint8) * 255] * len(output_video)
+        elif input_process_type == 'concat_ff_clip_lf':
+            video_frames_1, fps_1, width_1, height_1, total_frames_1 = read_video_frames(input_process_video_1, use_type='cv2', info=True)
+            video_masks_1 = [np.ones((height_1, width_1), dtype=np.uint8) * 255] * total_frames_1
+            frame_rate = fps_1
+            if input_process_image_1 is not None:
+                video_frames_1 = [np.array(input_process_image_1.resize((width_1, height_1)))] + video_frames_1
+                video_masks_1 = [np.zeros((height_1, width_1))] + video_masks_1
+            if input_process_image_2 is not None:
+                video_frames_1 = video_frames_1 + [np.array(input_process_image_2.resize((width_1, height_1)))]
+                video_masks_1 = video_masks_1 + [np.zeros((height_1, width_1))]
+            output_video = video_frames_1
+            output_mask = video_masks_1
         elif input_process_type == 'blank_mask':
             output_mask = [np.ones((output_height, output_width), dtype=np.uint8) * 255] * num_frames
         else:
@@ -1005,7 +1040,7 @@ class VACETag():
         self.vace_video_tag = VACEVideoTag(cfg)
         self.vace_image_tag = VACEImageTag(cfg)
         self.vace_tag_composition = VACETagComposition(cfg)
-        # self.vace_video_tool = VACEVideoTool(cfg)
+        self.vace_video_tool = VACEVideoTool(cfg)
 
 
     def create_ui(self, *args, **kwargs):
@@ -1021,15 +1056,15 @@ class VACETag():
                 self.vace_image_tag.create_ui_image(*args, **kwargs)
             with gr.TabItem('VACE Composition Tag', id=3, elem_id='composition_tab'):
                 self.vace_tag_composition.create_ui_composition(*args, **kwargs)
-            # with gr.TabItem('VACE Video Tool', id=4, elem_id='video_tool_tab'):
-            #     self.vace_video_tool.create_ui_video_tool(*args, **kwargs)
+            with gr.TabItem('VACE Video Tool', id=4, elem_id='video_tool_tab'):
+                self.vace_video_tool.create_ui_video_tool(*args, **kwargs)
 
 
     def set_callbacks(self, **kwargs):
         self.vace_video_tag.set_callbacks_video(**kwargs)
         self.vace_image_tag.set_callbacks_image(**kwargs)
         self.vace_tag_composition.set_callbacks_composition(**kwargs)
-        # self.vace_video_tool.set_callbacks_video_tool(**kwargs)
+        self.vace_video_tool.set_callbacks_video_tool(**kwargs)
 
 
 if __name__ == '__main__':

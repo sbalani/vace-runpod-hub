@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) Alibaba, Inc. and its affiliates.
 
-from .video_preproccess import video_depth_anno, video_flow_anno, video_gray_anno, video_pose_anno, video_scribble_anno
+from .video_preproccess import video_depth_anno, video_depthv2_anno, video_flow_anno, video_gray_anno, video_pose_anno, video_pose_body_anno, video_scribble_anno
 from .video_preproccess import video_framerefext_anno, video_firstframeref_anno, video_lastframeref_anno, video_firstlastframeref_anno, video_firstclipref_anno, video_lastclipref_anno, video_firstlastclipref_anno, video_framerefexp_anno, video_cliprefexp_anno
 from .video_preproccess import video_inpainting_mask_anno, video_inpainting_bbox_anno, video_inpainting_masktrack_anno, video_inpainting_bboxtrack_anno, video_inpainting_label_anno, video_inpainting_caption_anno, video_inpainting_anno
 from .video_preproccess import video_outpainting_anno, video_outpainting_inner_anno
@@ -45,9 +45,11 @@ VACE_IMAGE_MASKAUG_PREPROCCESS_CONFIGS = {
 VACE_VIDEO_PREPROCCESS_CONFIGS = {
     'plain': video_plain_anno,
     'depth': video_depth_anno,
+    'depthv2': video_depthv2_anno,
     'flow': video_flow_anno,
     'gray': video_gray_anno,
     'pose': video_pose_anno,
+    'pose_body': video_pose_body_anno,
     'scribble': video_scribble_anno,
     'framerefext': video_framerefext_anno,
     'frameref': video_framerefexp_anno,

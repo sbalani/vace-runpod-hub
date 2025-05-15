@@ -12,6 +12,13 @@ video_depth_anno.PRETRAINED_MODEL = "models/VACE-Annotators/depth/dpt_hybrid-mid
 video_depth_anno.INPUTS = {"frames": None}
 video_depth_anno.OUTPUTS = {"frames": None}
 
+#------------------------ Depth ------------------------#
+video_depthv2_anno = EasyDict()
+video_depthv2_anno.NAME = "DepthV2VideoAnnotator"
+video_depthv2_anno.PRETRAINED_MODEL = "models/VACE-Annotators/depth/depth_anything_v2_vitl.pth"
+video_depthv2_anno.INPUTS = {"frames": None}
+video_depthv2_anno.OUTPUTS = {"frames": None}
+
 #------------------------ Flow ------------------------#
 video_flow_anno = EasyDict()
 video_flow_anno.NAME = "FlowVisAnnotator"
@@ -32,6 +39,14 @@ video_pose_anno.DETECTION_MODEL = "models/VACE-Annotators/pose/yolox_l.onnx"
 video_pose_anno.POSE_MODEL = "models/VACE-Annotators/pose/dw-ll_ucoco_384.onnx"
 video_pose_anno.INPUTS = {"frames": None}
 video_pose_anno.OUTPUTS = {"frames": None}
+
+#------------------------ Pose ------------------------#
+video_pose_body_anno = EasyDict()
+video_pose_body_anno.NAME = "PoseBodyVideoAnnotator"
+video_pose_body_anno.DETECTION_MODEL = "models/VACE-Annotators/pose/yolox_l.onnx"
+video_pose_body_anno.POSE_MODEL = "models/VACE-Annotators/pose/dw-ll_ucoco_384.onnx"
+video_pose_body_anno.INPUTS = {"frames": None}
+video_pose_body_anno.OUTPUTS = {"frames": None}
 
 #------------------------ Scribble ------------------------#
 video_scribble_anno = EasyDict()
