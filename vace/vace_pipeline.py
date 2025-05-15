@@ -1,3 +1,4 @@
+import torch
 import argparse
 import importlib
 from typing import Dict, Any
@@ -39,8 +40,12 @@ def main():
 
     # run preprocess
     preprocess_args = filter_args(args_dict, preprocess_parser)
-    preprocess_output = importlib.import_module(preproccess_name).main(preprocess_args)
+    preprocesser = importlib.import_module(preproccess_name)
+    preprocess_output = preprocesser.main(preprocess_args)
     print("preprocess_output:", preprocess_output)
+
+    del preprocesser
+    torch.cuda.empty_cache()
 
     # run inference
     inference_args = filter_args(args_dict, inference_parser)

@@ -12,7 +12,7 @@ import gradio as gr
 
 sys.path.insert(0, os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-3]))
 import wan
-from vace.models.wan.wan_vace import WanVace
+from vace.models.wan.wan_vace import WanVace, WanVaceMP
 from vace.models.wan.configs import WAN_CONFIGS, SIZE_CONFIGS
 
 
@@ -37,15 +37,25 @@ class VACEInference:
         self.gallery_share = gallery_share
         self.gallery_share_data = FixedSizeQueue(max_size=gallery_share_limit)
         if not skip_load:
-            self.pipe = WanVace(
-                config=WAN_CONFIGS['vace-1.3B'],
-                checkpoint_dir=cfg.ckpt_dir,
-                device_id=0,
-                rank=0,
-                t5_fsdp=False,
-                dit_fsdp=False,
-                use_usp=False,
-            )
+            if not args.mp:
+                self.pipe = WanVace(
+                    config=WAN_CONFIGS[cfg.model_name],
+                    checkpoint_dir=cfg.ckpt_dir,
+                    device_id=0,
+                    rank=0,
+                    t5_fsdp=False,
+                    dit_fsdp=False,
+                    use_usp=False,
+                )
+            else:
+                self.pipe = WanVaceMP(
+                    config=WAN_CONFIGS[cfg.model_name],
+                    checkpoint_dir=cfg.ckpt_dir,
+                    use_usp=True,
+                    ulysses_size=cfg.ulysses_size,
+                    ring_size=cfg.ring_size
+                )
+
 
     def create_ui(self, *args, **kwargs):
         gr.Markdown("""
@@ -123,9 +133,9 @@ class VACEInference:
                     self.shift_scale = gr.Slider(
                         label='shift_scale',
                         minimum=0.0,
-                        maximum=10.0,
+                        maximum=100.0,
                         step=1.0,
-                        value=8.0,
+                        value=16.0,
                         interactive=True)
                     self.sample_steps = gr.Slider(
                         label='sample_steps',
@@ -146,7 +156,7 @@ class VACEInference:
                         minimum=1,
                         maximum=10,
                         step=0.5,
-                        value=6.0,
+                        value=5.0,
                         interactive=True)
                     self.infer_seed = gr.Slider(minimum=-1,
                                                 maximum=10000000,
@@ -198,7 +208,7 @@ class VACEInference:
                                                                          [src_mask],
                                                                          [src_ref_images],
                                                                          num_frames=num_frames,
-                                                                         image_size=SIZE_CONFIGS[f"{output_height}*{output_width}"],
+                                                                         image_size=SIZE_CONFIGS[f"{output_width}*{output_height}"],
                                                                          device=self.pipe.device)
         video = self.pipe.generate(
             prompt,
@@ -214,7 +224,7 @@ class VACEInference:
             seed=infer_seed,
             offload_model=True)
 
-        name = '{0:%Y%m%d%-H%M%S}'.format(datetime.datetime.now())
+        name = '{0:%Y%m%d%H%M%S}'.format(datetime.datetime.now())
         video_path = os.path.join(self.save_dir, f'cur_gallery_{name}.mp4')
         video_frames = (torch.clamp(video / 2 + 0.5, min=0.0, max=1.0).permute(1, 2, 3, 0) * 255).cpu().numpy().astype(np.uint8)
 
@@ -244,15 +254,19 @@ class VACEInference:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Argparser for VACE-LTXV Demo:\n')
+    parser = argparse.ArgumentParser(description='Argparser for VACE-WAN Demo:\n')
     parser.add_argument('--server_port', dest='server_port', help='', type=int, default=7860)
     parser.add_argument('--server_name', dest='server_name', help='', default='0.0.0.0')
     parser.add_argument('--root_path', dest='root_path', help='', default=None)
     parser.add_argument('--save_dir', dest='save_dir', help='', default='cache')
+    parser.add_argument("--mp", action="store_true", help="Use Multi-GPUs",)
+    parser.add_argument("--model_name", type=str, default="vace-1.3B", choices=list(WAN_CONFIGS.keys()), help="The model name to run.")
+    parser.add_argument("--ulysses_size", type=int, default=1, help="The size of the ulysses parallelism in DiT.")
+    parser.add_argument("--ring_size", type=int, default=1, help="The size of the ring attention parallelism in DiT.")
     parser.add_argument(
         "--ckpt_dir",
         type=str,
-        default='models/VACE-Wan2.1-1.3B-Preview',
+        default='models/Wan2.1-VACE-1.3B',
         help="The path to the checkpoint directory.",
     )
     parser.add_argument(

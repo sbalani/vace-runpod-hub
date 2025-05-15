@@ -97,6 +97,13 @@ class VaceVideoProcessor(object):
         self.seq_len = seq_len
         assert seq_len >= min_area / (self.downsample[1] * self.downsample[2])
 
+    def set_area(self, area):
+        self.min_area = area
+        self.max_area = area
+
+    def set_seq_len(self, seq_len):
+        self.seq_len = seq_len
+
     @staticmethod
     def resize_crop(video: torch.Tensor, oh: int, ow: int):
         """
@@ -148,22 +155,14 @@ class VaceVideoProcessor(object):
         ratio = h / w
         df, dh, dw = self.downsample
 
-        # min/max area of the [latent video]
-        min_area_z = self.min_area / (dh * dw)
-        max_area_z = min(self.seq_len, self.max_area / (dh * dw), (h // dh) * (w // dw))
-
-        # sample a frame number of the [latent video]
-        rand_area_z = np.square(np.power(2, rng.uniform(
-            np.log2(np.sqrt(min_area_z)),
-            np.log2(np.sqrt(max_area_z))
-        )))
+        area_z = min(self.seq_len, self.max_area / (dh * dw), (h // dh) * (w // dw))
         of = min(
             (int(duration * target_fps) - 1) // df + 1,
-            int(self.seq_len / rand_area_z)
+            int(self.seq_len / area_z)
         )
 
         # deduce target shape of the [latent video]
-        target_area_z = min(max_area_z, int(self.seq_len / of))
+        target_area_z = min(area_z, int(self.seq_len / of))
         oh = round(np.sqrt(target_area_z * ratio))
         ow = int(target_area_z / oh)
         of = (of - 1) * df + 1
@@ -187,23 +186,14 @@ class VaceVideoProcessor(object):
         ratio = h / w
         df, dh, dw = self.downsample
 
-        # min/max area of the [latent video]
-        min_area_z = self.min_area / (dh * dw)
-        max_area_z = min(self.seq_len, self.max_area / (dh * dw), (h // dh) * (w // dw))
-
-        # sample a frame number of the [latent video]
-        rand_area_z = np.square(np.power(2, rng.uniform(
-            np.log2(np.sqrt(min_area_z)),
-            np.log2(np.sqrt(max_area_z))
-        )))
-
+        area_z = min(self.seq_len, self.max_area / (dh * dw), (h // dh) * (w // dw))
         of = min(
             (len(frame_timestamps) - 1) // df + 1,
-            int(self.seq_len / rand_area_z)
+            int(self.seq_len / area_z)
         )
 
         # deduce target shape of the [latent video]
-        target_area_z = min(max_area_z, int(self.seq_len / of))
+        target_area_z = min(area_z, int(self.seq_len / of))
         oh = round(np.sqrt(target_area_z * ratio))
         ow = int(target_area_z / oh)
         of = (of - 1) * df + 1

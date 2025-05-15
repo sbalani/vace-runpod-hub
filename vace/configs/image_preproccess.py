@@ -11,6 +11,13 @@ image_depth_anno.PRETRAINED_MODEL = "models/VACE-Annotators/depth/dpt_hybrid-mid
 image_depth_anno.INPUTS = {"image": None}
 image_depth_anno.OUTPUTS = {"image": None}
 
+#------------------------ Depth ------------------------#
+image_depthv2_anno = EasyDict()
+image_depthv2_anno.NAME = "DepthV2Annotator"
+image_depthv2_anno.PRETRAINED_MODEL = "models/VACE-Annotators/depth/depth_anything_v2_vitl.pth"
+image_depthv2_anno.INPUTS = {"image": None}
+image_depthv2_anno.OUTPUTS = {"image": None}
+
 #------------------------ Gray ------------------------#
 image_gray_anno = EasyDict()
 image_gray_anno.NAME = "GrayAnnotator"

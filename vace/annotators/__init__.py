@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) Alibaba, Inc. and its affiliates.
-from .depth import DepthAnnotator, DepthVideoAnnotator
+from .depth import DepthAnnotator, DepthVideoAnnotator, DepthV2VideoAnnotator
 from .flow import FlowAnnotator, FlowVisAnnotator
 from .frameref import FrameRefExtractAnnotator, FrameRefExpandAnnotator
 from .gdino import GDINOAnnotator, GDINORAMAnnotator
@@ -9,7 +9,7 @@ from .inpainting import InpaintingAnnotator, InpaintingVideoAnnotator
 from .layout import LayoutBboxAnnotator, LayoutMaskAnnotator, LayoutTrackAnnotator
 from .maskaug import MaskAugAnnotator
 from .outpainting import OutpaintingAnnotator, OutpaintingInnerAnnotator, OutpaintingVideoAnnotator, OutpaintingInnerVideoAnnotator
-from .pose import PoseBodyFaceAnnotator, PoseBodyFaceVideoAnnotator, PoseAnnotator
+from .pose import PoseBodyFaceAnnotator, PoseBodyFaceVideoAnnotator, PoseAnnotator, PoseBodyVideoAnnotator, PoseBodyAnnotator
 from .ram import RAMAnnotator
 from .salient import SalientAnnotator, SalientVideoAnnotator
 from .sam import SAMImageAnnotator

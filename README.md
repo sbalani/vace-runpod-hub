@@ -32,18 +32,19 @@
 
 
 ## 🎉 News
+- [x] May 14, 2025: 🔥Wan2.1-VACE-1.3B and Wan2.1-VACE-14B models are now available at [HuggingFace](https://huggingface.co/Wan-AI/Wan2.1-VACE-14B) and [ModelScope](https://www.modelscope.cn/models/Wan-AI/Wan2.1-VACE-14B)!
 - [x] Mar 31, 2025: 🔥VACE-Wan2.1-1.3B-Preview and VACE-LTX-Video-0.9 models are now available at [HuggingFace](https://huggingface.co/collections/ali-vilab/vace-67eca186ff3e3564726aff38) and [ModelScope](https://modelscope.cn/collections/VACE-8fa5fcfd386e43)!
 - [x] Mar 31, 2025: 🔥Release code of model inference, preprocessing, and gradio demos. 
 - [x] Mar 11, 2025: We propose [VACE](https://ali-vilab.github.io/VACE-Page/), an all-in-one model for video creation and editing.
 
 
 ## 🪄 Models
-| Models                   | Download Link                                                                                                                                                                           | Video Size          | License                                                                                       |
-|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|-----------------------------------------------------------------------------------------------|
-| VACE-Wan2.1-1.3B-Preview | [Huggingface](https://huggingface.co/ali-vilab/VACE-Wan2.1-1.3B-Preview) 🤗  [ModelScope](https://modelscope.cn/models/iic/VACE-Wan2.1-1.3B-Preview) 🤖                                                                                                                                                                   | ~ 81 x 480 x 832    | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B/blob/main/LICENSE.txt)             |
-| VACE-LTX-Video-0.9       | [Huggingface](https://huggingface.co/ali-vilab/VACE-LTX-Video-0.9) 🤗     [ModelScope](https://modelscope.cn/models/iic/VACE-LTX-Video-0.9) 🤖                                                                                                                                                                   | ~ 97 x 512 x 768    | [RAIL-M](https://huggingface.co/Lightricks/LTX-Video/blob/main/ltx-video-2b-v0.9.license.txt) |
-| Wan2.1-VACE-1.3B             | [To be released](https://github.com/Wan-Video) <img src='https://ali-vilab.github.io/VACE-Page/assets/logos/wan_logo.png' alt='wan_logo' style='margin-bottom: -4px; height: 15px;'>  | ~ 81 x 480 x 832    | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B/blob/main/LICENSE.txt)             |
-| Wan2.1-VACE-14B          | [To be released](https://github.com/Wan-Video) <img src='https://ali-vilab.github.io/VACE-Page/assets/logos/wan_logo.png' alt='wan_logo' style='margin-bottom: -4px; height: 15px;'>  | ~ 81 x 720 x 1080   | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-14B/blob/main/LICENSE.txt)             |
+| Models                   | Download Link                                                                                                                                           | Video Size        | License                                                                                       |
+|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|-----------------------------------------------------------------------------------------------|
+| VACE-Wan2.1-1.3B-Preview | [Huggingface](https://huggingface.co/ali-vilab/VACE-Wan2.1-1.3B-Preview) 🤗  [ModelScope](https://modelscope.cn/models/iic/VACE-Wan2.1-1.3B-Preview) 🤖 | ~ 81 x 480 x 832  | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B/blob/main/LICENSE.txt)             |
+| VACE-LTX-Video-0.9       | [Huggingface](https://huggingface.co/ali-vilab/VACE-LTX-Video-0.9) 🤗     [ModelScope](https://modelscope.cn/models/iic/VACE-LTX-Video-0.9) 🤖          | ~ 97 x 512 x 768  | [RAIL-M](https://huggingface.co/Lightricks/LTX-Video/blob/main/ltx-video-2b-v0.9.license.txt) |
+| Wan2.1-VACE-1.3B         | [Huggingface](https://huggingface.co/Wan-AI/Wan2.1-VACE-1.3B) 🤗     [ModelScope](https://www.modelscope.cn/models/Wan-AI/Wan2.1-VACE-1.3B) 🤖          | ~ 81 x 480 x 832  | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B/blob/main/LICENSE.txt)             |
+| Wan2.1-VACE-14B          | [Huggingface](https://huggingface.co/Wan-AI/Wan2.1-VACE-14B) 🤗     [ModelScope](https://www.modelscope.cn/models/Wan-AI/Wan2.1-VACE-14B) 🤖            | ~ 81 x 720 x 1280 | [Apache-2.0](https://huggingface.co/Wan-AI/Wan2.1-T2V-14B/blob/main/LICENSE.txt)             |
 
 - The input supports any resolution, but to achieve optimal results, the video size should fall within a specific range.
 - All models inherit the license of the original model.
@@ -137,12 +138,15 @@ You can also customize preprocessors by implementing at [`annotators`](./vace/an
 #### 3) Model inference
 Using the input data obtained from **Preprocessing**, the model inference process can be performed as follows:
 ```bash
-# For Wan2.1 single GPU inference 
+# For Wan2.1 single GPU inference (1.3B-480P)
 python vace/vace_wan_inference.py --ckpt_dir <path-to-model> --src_video <path-to-src-video> --src_mask <path-to-src-mask> --src_ref_images <paths-to-src-ref-images> --prompt "xxx"
 
-# For Wan2.1 Multi GPU Acceleration inference
+# For Wan2.1 Multi GPU Acceleration inference (1.3B-480P)
 pip install "xfuser>=0.4.1"
 torchrun --nproc_per_node=8 vace/vace_wan_inference.py --dit_fsdp --t5_fsdp --ulysses_size 1 --ring_size 8 --ckpt_dir <path-to-model> --src_video <path-to-src-video> --src_mask <path-to-src-mask> --src_ref_images <paths-to-src-ref-images> --prompt "xxx"
+
+# For Wan2.1 Multi GPU Acceleration inference (14B-720P)
+torchrun --nproc_per_node=8 vace/vace_wan_inference.py --dit_fsdp --t5_fsdp --ulysses_size 8 --ring_size 1 --size 720p --model_name 'vace-14B' --ckpt_dir <path-to-model> --src_video <path-to-src-video> --src_mask <path-to-src-mask> --src_ref_images <paths-to-src-ref-images> --prompt "xxx"
 
 # For LTX inference, run
 python vace/vace_ltx_inference.py --ckpt_path <path-to-model> --text_encoder_path <path-to-model> --src_video <path-to-src-video> --src_mask <path-to-src-mask> --src_ref_images <paths-to-src-ref-images> --prompt "xxx"
@@ -158,7 +162,7 @@ Please follow the [instruction of Wan2.1](https://github.com/Wan-Video/Wan2.1?ta
 ### Inference Gradio
 For preprocessors, run 
 ```bash
-python vace/gradios/preprocess_demo.py
+python vace/gradios/vace_preprocess_demo.py
 ```
 For model inference, run
 ```bash

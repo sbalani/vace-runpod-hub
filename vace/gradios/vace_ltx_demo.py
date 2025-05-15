@@ -196,7 +196,7 @@ class VACEInference:
                                     num_frames=num_frames)
 
         frame_rate = output['info']['frame_rate']
-        name = '{0:%Y%m%d%-H%M%S}'.format(datetime.datetime.now())
+        name = '{0:%Y%m%d%H%M%S}'.format(datetime.datetime.now())
         video_path = os.path.join(self.save_dir, f'cur_gallery_{name}.mp4')
         video_frames = (torch.clamp(output['out_video'] / 2 + 0.5, min=0.0, max=1.0).permute(1, 2, 3, 0) * 255).cpu().numpy().astype(np.uint8)
 

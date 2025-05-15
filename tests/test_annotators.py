@@ -104,11 +104,11 @@ class AnnotatorTest(unittest.TestCase):
         save_one_video(save_path, ret_frames, fps=16)
         print(('Testing %s: %s' % (type(self).__name__, save_path)))
 
-    @unittest.skip('')
+    # @unittest.skip('')
     def test_annotator_depth_image(self):
         from vace.annotators.depth import DepthAnnotator
         cfg_dict = {
-            "PRETRAINED_MODEL": "models/VACE-Annotators/depth/dpt_hybrid-midas-501f0c75.pt"
+            "PRETRAINED_MODEL": "models/VACE-Annotators/depth/depth_anything_v2_vitl.pth"
         }
         anno_ins = DepthAnnotator(cfg_dict)
         anno_image = anno_ins.forward(np.array(self.image))
@@ -116,11 +116,11 @@ class AnnotatorTest(unittest.TestCase):
         Image.fromarray(anno_image).save(save_path)
         print(('Testing %s: %s' % (type(self).__name__, save_path)))
 
-    @unittest.skip('')
+    # @unittest.skip('')
     def test_annotator_depth_video(self):
         from vace.annotators.depth import DepthAnnotator
         cfg_dict = {
-            "PRETRAINED_MODEL": "models/VACE-Annotators/depth/dpt_hybrid-midas-501f0c75.pt"
+            "PRETRAINED_MODEL": "models/VACE-Annotators/depth/depth_anything_v2_vitl.pth"
         }
         anno_ins = DepthAnnotator(cfg_dict)
         ret_frames = []
@@ -525,7 +525,7 @@ class AnnotatorTest(unittest.TestCase):
         ret_data = anno_ins.forward(image=self.image, input_box=[0, 0, 640, 480])
         print(ret_data)
 
-    # @unittest.skip('')
+    @unittest.skip('')
     def test_annotator_prompt_extend(self):
         from vace.annotators.prompt_extend import PromptExtendAnnotator
         from vace.configs.prompt_preprocess import WAN_LM_ZH_SYS_PROMPT, WAN_LM_EN_SYS_PROMPT, LTX_LM_EN_SYS_PROMPT
