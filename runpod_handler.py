@@ -7,22 +7,29 @@ import runpod
 import torch
 from huggingface_hub import hf_hub_download, snapshot_download
 
+print("Starting VACE RunPod handler...", flush=True)
+
 # Add project root to python path for vace imports
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, current_dir)  # Add current directory
 sys.path.insert(0, os.path.join(current_dir, "vace"))  # Add vace directory
 
+print("Python path set up", flush=True)
+
 from vace.vace_wan_inference import main as vace_wan_inference
 from vace.models.wan import WanVace
 from vace.models.wan.configs import WAN_CONFIGS, SIZE_CONFIGS, SUPPORTED_SIZES
 
+print("VACE imports successful", flush=True)
+
 def download_models():
     """Download required model files if they don't exist"""
+    print("Starting model download...", flush=True)
     # Create models directory if it doesn't exist
     os.makedirs("models", exist_ok=True)
 
     # Download the full Wan2.1-VACE-14B repository
-    print("Downloading Wan2.1-VACE-14B repository...")
+    print("Downloading Wan2.1-VACE-14B repository...", flush=True)
     snapshot_download(
         repo_id="Wan-AI/Wan2.1-VACE-14B",
         local_dir="models",
@@ -48,13 +55,14 @@ def download_models():
     for filename, info in model_files.items():
         filepath = os.path.join("models", filename)
         if not os.path.exists(filepath):
-            print(f"Downloading {filename} from {info['repo_id']}...")
+            print(f"Downloading {filename} from {info['repo_id']}...", flush=True)
             hf_hub_download(
                 repo_id=info["repo_id"],
                 filename=info["filename"],
                 local_dir="models",
                 local_dir_use_symlinks=False
             )
+    print("Model download complete", flush=True)
 
 def save_base64_to_file(base64_string: str, filepath: str) -> None:
     """Save a base64 encoded file to disk"""
@@ -65,6 +73,7 @@ def generate_video(job):
     """
     Generate a video using VACE model
     """
+    print(f"Received job: {job}", flush=True)
     try:
         # Get input parameters
         input_data = job["input"]
@@ -120,8 +129,10 @@ def generate_video(job):
                 "save_file": os.path.join(temp_dir, "output.mp4")
             }
 
+            print("Starting inference...", flush=True)
             # Run inference
             result = vace_wan_inference(args)
+            print("Inference complete", flush=True)
 
             # Read output video and convert to base64
             with open(result["out_video"], "rb") as f:
@@ -151,10 +162,15 @@ def generate_video(job):
             return response
 
     except Exception as e:
+        print(f"Error in generate_video: {str(e)}", flush=True)
+        import traceback
+        traceback.print_exc()
         return {"error": str(e)}
 
+print("Starting model download...", flush=True)
 # Download models on startup
 download_models()
+print("Model download complete, starting RunPod serverless handler...", flush=True)
 
 # Start the RunPod serverless handler
 runpod.serverless.start({"handler": generate_video}) 
