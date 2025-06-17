@@ -1,0 +1,36 @@
+{
+    "tests": [
+      {
+        "name": "video_generation_test",
+        "input": {
+          "prompt": "A beautiful sunset over mountains",
+          "size": "480p",
+          "frame_num": 81,
+          "sample_steps": 25,
+          "sample_guide_scale": 5.0
+        },
+        "timeout": 300000
+      }
+    ],
+    "config": {
+      "gpuTypeId": "NVIDIA GeForce RTX 4090",
+      "gpuCount": 1,
+      "env": [
+        {
+          "key": "CUDA_VISIBLE_DEVICES",
+          "value": "0"
+        }
+      ],
+      "allowedCudaVersions": [
+        "12.8",
+        "12.7",
+        "12.6",
+        "12.5",
+        "12.4",
+        "12.3",
+        "12.2",
+        "12.1",
+        "12.0"
+      ]
+    }
+  }

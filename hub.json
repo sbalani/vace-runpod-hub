@@ -1,0 +1,47 @@
+{
+    "title": "VACE Video Generation",
+    "description": "VACE (Video Animation and Control Engine) is a powerful AI model for text-to-video generation and video editing. It supports various features including text-to-video generation, video inpainting, and reference-based video generation.",
+    "type": "serverless",
+    "category": "video",
+    "iconUrl": "https://raw.githubusercontent.com/pftq/VACE_Fixes/main/assets/logo.png",
+    "config": {
+      "runsOn": "GPU",
+      "containerDiskInGb": 50,
+      "presets": [
+        {
+          "name": "Standard Video Generation",
+          "defaults": {
+            "size": "480p",
+            "frame_num": 81,
+            "sample_steps": 25,
+            "sample_guide_scale": 5.0,
+            "sample_solver": "unipc"
+          }
+        },
+        {
+          "name": "High Quality Video",
+          "defaults": {
+            "size": "720p",
+            "frame_num": 120,
+            "sample_steps": 30,
+            "sample_guide_scale": 7.0,
+            "sample_solver": "unipc"
+          }
+        }
+      ],
+      "env": [
+        {
+          "key": "CUDA_VISIBLE_DEVICES",
+          "value": "0"
+        },
+        {
+          "key": "PYTORCH_CUDA_ALLOC_CONF",
+          "value": "max_split_size_mb:512"
+        },
+        {
+          "key": "MODEL_PATH",
+          "value": "models"
+        }
+      ]
+    }
+  }
