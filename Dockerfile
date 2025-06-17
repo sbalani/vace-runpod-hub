@@ -10,8 +10,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     software-properties-common \
     gnupg2 \
     python3-apt \
-    && add-apt-repository ppa:deadsnakes/ppa \
-    && apt-get update && apt-get install -y --no-install-recommends \
     python3.11 \
     python3.11-venv \
     python3-pip \
@@ -34,7 +32,7 @@ RUN python3.11 -m venv venv && \
 RUN cd /workspace && \
     git clone https://github.com/Dao-AILab/flash-attention && \
     cd flash-attention && \
-    MAX_JOBS=4 python setup.py install
+    MAX_JOBS=2 python setup.py install
 
 # Clone VACE and install dependencies
 RUN cd /workspace && \
