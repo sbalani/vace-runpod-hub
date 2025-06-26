@@ -27,7 +27,7 @@ dependencies = [
     "ftfy",
     "dashscope",
     "imageio-ffmpeg",
-    "flash_attn",
+    #"flash_attn",  # Commented out - using all-in-one safetensors model
     "decord",
     "einops",
     "scikit-image",
