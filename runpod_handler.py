@@ -88,6 +88,14 @@ def generate_video(event):
         # Get input parameters
         input_data = event["input"]
         
+        # Get environment variables for configuration
+        prompt = input_data.get("prompt", os.environ.get("PROMPT", "A beautiful sunset over mountains"))
+        size = input_data.get("size", os.environ.get("VIDEO_SIZE", "480p"))
+        frame_num = input_data.get("frame_num", int(os.environ.get("FRAME_NUM", "81")))
+        sample_steps = input_data.get("sample_steps", int(os.environ.get("SAMPLE_STEPS", "25")))
+        sample_guide_scale = input_data.get("sample_guide_scale", float(os.environ.get("SAMPLE_GUIDE_SCALE", "5.0")))
+        sample_solver = input_data.get("sample_solver", os.environ.get("SAMPLE_SOLVER", "unipc"))
+        
         # Create temporary directory for processing
         with tempfile.TemporaryDirectory() as temp_dir:
             # Handle source video if provided
@@ -117,18 +125,18 @@ def generate_video(event):
             # Prepare arguments for vace_wan_inference
             args = {
                 "model_name": input_data.get("model_name", "vace-14B"),
-                "prompt": input_data.get("prompt", ""),
+                "prompt": prompt,
                 "src_video": src_video,
                 "src_mask": src_mask,
                 "src_ref_images": src_ref_images,
-                "size": input_data.get("size", "480p"),
-                "frame_num": input_data.get("frame_num", 81),
+                "size": size,
+                "frame_num": frame_num,
                 "base_seed": input_data.get("base_seed", -1),
-                "sample_solver": input_data.get("sample_solver", "unipc"),
-                "sample_steps": input_data.get("sample_steps", 25),
+                "sample_solver": sample_solver,
+                "sample_steps": sample_steps,
                 "sample_shift": input_data.get("sample_shift", 5.0),
-                "sample_guide_scale": input_data.get("sample_guide_scale", 5.0),
-                "ckpt_dir": "models",
+                "sample_guide_scale": sample_guide_scale,
+                "ckpt_dir": os.environ.get("MODEL_PATH", "models"),
                 "offload_model": True,
                 "ulysses_size": 1,
                 "ring_size": 1,

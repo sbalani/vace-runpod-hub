@@ -19,6 +19,26 @@
         {
           "key": "CUDA_VISIBLE_DEVICES",
           "value": "0"
+        },
+        {
+          "key": "PROMPT",
+          "value": "A beautiful sunset over mountains"
+        },
+        {
+          "key": "VIDEO_SIZE",
+          "value": "480p"
+        },
+        {
+          "key": "FRAME_NUM",
+          "value": "81"
+        },
+        {
+          "key": "SAMPLE_STEPS",
+          "value": "25"
+        },
+        {
+          "key": "SAMPLE_GUIDE_SCALE",
+          "value": "5.0"
         }
       ],
       "allowedCudaVersions": [

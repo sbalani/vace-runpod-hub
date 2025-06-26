@@ -1,0 +1,129 @@
+{
+    "title": "VACE Video Generation",
+    "description": "VACE (Video Animation and Control Engine) is a powerful AI model for text-to-video generation and video editing. It supports various features including text-to-video generation, video inpainting, and reference-based video generation.",
+    "type": "serverless",
+    "category": "video",
+    "iconUrl": "https://raw.githubusercontent.com/pftq/VACE_Fixes/main/assets/logo.png",
+    "config": {
+      "runsOn": "GPU",
+      "containerDiskInGb": 50,
+      "gpuCount": 1,
+      "gpuIds": "RTX_4090,RTX_A4000,RTX_A5000,RTX_A6000",
+      "allowedCudaVersions": [
+        "12.8", "12.7", "12.6", "12.5", "12.4",
+        "12.3", "12.2", "12.1", "12.0"
+      ],
+      "presets": [
+        {
+          "name": "Standard Video Generation",
+          "defaults": {
+            "VIDEO_SIZE": "480p",
+            "FRAME_NUM": 81,
+            "SAMPLE_STEPS": 25,
+            "SAMPLE_GUIDE_SCALE": 5.0,
+            "SAMPLE_SOLVER": "unipc"
+          }
+        },
+        {
+          "name": "High Quality Video",
+          "defaults": {
+            "VIDEO_SIZE": "720p",
+            "FRAME_NUM": 120,
+            "SAMPLE_STEPS": 30,
+            "SAMPLE_GUIDE_SCALE": 7.0,
+            "SAMPLE_SOLVER": "unipc"
+          }
+        }
+      ],
+      "env": [
+        {
+          "key": "CUDA_VISIBLE_DEVICES",
+          "value": "0"
+        },
+        {
+          "key": "PYTORCH_CUDA_ALLOC_CONF",
+          "value": "max_split_size_mb:512"
+        },
+        {
+          "key": "MODEL_PATH",
+          "value": "models"
+        },
+        {
+          "key": "PROMPT",
+          "input": {
+            "name": "Video Prompt",
+            "type": "string",
+            "description": "Text description of the video to generate",
+            "default": "A beautiful sunset over mountains",
+            "advanced": false
+          }
+        },
+        {
+          "key": "VIDEO_SIZE",
+          "input": {
+            "name": "Video Size",
+            "type": "string",
+            "description": "Resolution of the generated video",
+            "options": [
+              {"label": "480p", "value": "480p"},
+              {"label": "720p", "value": "720p"},
+              {"label": "1080p", "value": "1080p"}
+            ],
+            "default": "480p",
+            "advanced": false
+          }
+        },
+        {
+          "key": "FRAME_NUM",
+          "input": {
+            "name": "Number of Frames",
+            "type": "number",
+            "description": "Number of frames to generate",
+            "min": 16,
+            "max": 200,
+            "default": 81,
+            "advanced": false
+          }
+        },
+        {
+          "key": "SAMPLE_STEPS",
+          "input": {
+            "name": "Sample Steps",
+            "type": "number",
+            "description": "Number of sampling steps (higher = better quality, slower)",
+            "min": 10,
+            "max": 50,
+            "default": 25,
+            "advanced": true
+          }
+        },
+        {
+          "key": "SAMPLE_GUIDE_SCALE",
+          "input": {
+            "name": "Sample Guide Scale",
+            "type": "number",
+            "description": "Guidance scale for sampling (higher = more prompt adherence)",
+            "min": 1.0,
+            "max": 20.0,
+            "default": 5.0,
+            "advanced": true
+          }
+        },
+        {
+          "key": "SAMPLE_SOLVER",
+          "input": {
+            "name": "Sample Solver",
+            "type": "string",
+            "description": "Sampling solver algorithm",
+            "options": [
+              {"label": "UniPC", "value": "unipc"},
+              {"label": "DDIM", "value": "ddim"},
+              {"label": "Euler", "value": "euler"}
+            ],
+            "default": "unipc",
+            "advanced": true
+          }
+        }
+      ]
+    }
+  }
