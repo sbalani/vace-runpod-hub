@@ -29,12 +29,12 @@ def download_models():
     os.makedirs("models", exist_ok=True)
 
     # Download the full Wan2.1-VACE-14B repository
-    print("Downloading Wan2.1-VACE-14B repository...", flush=True)
-    snapshot_download(
-        repo_id="Wan-AI/Wan2.1-VACE-14B",
-        local_dir="models",
-        local_dir_use_symlinks=False
-    )
+    #print("Downloading Wan2.1-VACE-14B repository...", flush=True)
+    #snapshot_download(
+    #    repo_id="Wan-AI/Wan2.1-VACE-14B",
+    #    local_dir="models",
+    #    local_dir_use_symlinks=False
+    #)
 
     # Download model files if they don't exist
     model_files = {
@@ -42,6 +42,11 @@ def download_models():
             "repo_id": "google/umt5-xxl",
             "filename": "special_tokens_map.json"
         },
+        "Wan2.1_T2V_14B_FusionX_VACE-FP16.safetensors": {
+            "repo_id": "QuantStack/Wan2.1_T2V_14B_FusionX_VACE",
+            "filename": "Wan2.1_T2V_14B_FusionX_VACE-FP16.safetensors"
+        },
+
         "tokenizer_config.json": {
             "repo_id": "google/umt5-xxl",
             "filename": "tokenizer_config.json"

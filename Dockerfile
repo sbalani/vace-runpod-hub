@@ -25,14 +25,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python3.11 -m venv venv && \
     . /workspace/venv/bin/activate && \
     pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128 && \
-    pip install decord ninja wheel packaging onnxruntime-gpu && \
-    pip uninstall -y flash_attn
+    pip install decord ninja wheel packaging onnxruntime-gpu
 
-# Clone and install flash-attention
-RUN cd /workspace && \
-    git clone https://github.com/Dao-AILab/flash-attention && \
-    cd flash-attention && \
-    MAX_JOBS=2 python setup.py install
+# Clone and install flash-attention (commented out - using all-in-one safetensors model)
+# RUN cd /workspace && \
+#     git clone https://github.com/Dao-AILab/flash-attention && \
+#     cd flash-attention && \
+#     MAX_JOBS=2 python setup.py install
 
 # Clone VACE and install dependencies
 RUN cd /workspace && \
