@@ -1,4 +1,4 @@
-[![Runpod](https://api.runpod.io/badge/sbalani/VACE)](https://www.runpod.io/console/hub/sbalani/VACE)
+[![Runpod](https://api.runpod.io/badge/sbalani/vace-runpod-hub)](https://console.runpod.io/hub/sbalani/vace-runpod-hub)
 <p align="center">
 
 <h1 align="center">VACE: All-in-One Video Creation and Editing</h1>
