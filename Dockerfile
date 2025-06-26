@@ -39,7 +39,7 @@ RUN cd /workspace && \
     cd VACE_Fixes && \
     . /workspace/venv/bin/activate && \
     pip install -r requirements.txt && \
-    pip install wan@git+https://github.com/Wan-Video/Wan2.1 && \
+    pip install wan@git+https://github.com/Wan-Video/Wan2.1 --no-deps && \
     pip install ltx-video@git+https://github.com/Lightricks/LTX-Video@ltx-video-0.9.1 sentencepiece --no-deps && \
     pip install "huggingface_hub[cli]" && \
     huggingface-cli download Wan-AI/Wan2.1-T2V-1.3B --local-dir ./models/Wan2.1-T2V-14B && \
