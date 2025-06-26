@@ -74,14 +74,19 @@ def save_base64_to_file(base64_string: str, filepath: str) -> None:
     with open(filepath, "wb") as f:
         f.write(base64.b64decode(base64_string))
 
-def generate_video(job):
+def test_handler(event):
+    """Simple test handler to verify RunPod detection"""
+    print(f"Test handler called with event: {event}", flush=True)
+    return {"status": "success", "message": "Test handler working"}
+
+def generate_video(event):
     """
     Generate a video using VACE model
     """
-    print(f"Received job: {job}", flush=True)
+    print(f"Received event: {event}", flush=True)
     try:
         # Get input parameters
-        input_data = job["input"]
+        input_data = event["input"]
         
         # Create temporary directory for processing
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -177,5 +182,10 @@ print("Starting model download...", flush=True)
 download_models()
 print("Model download complete, starting RunPod serverless handler...", flush=True)
 
+# Debug: Print available functions
+print(f"Available functions: {[f for f in dir() if callable(globals()[f]) and not f.startswith('_')]}", flush=True)
+print(f"generate_video function: {generate_video}", flush=True)
+
 # Start the RunPod serverless handler
+print("Starting RunPod serverless with generate_video handler...", flush=True)
 runpod.serverless.start({"handler": generate_video}) 
