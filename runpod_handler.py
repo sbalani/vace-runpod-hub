@@ -96,6 +96,13 @@ def generate_video(event):
         sample_guide_scale = input_data.get("sample_guide_scale", float(os.environ.get("SAMPLE_GUIDE_SCALE", "5.0")))
         sample_solver = input_data.get("sample_solver", os.environ.get("SAMPLE_SOLVER", "unipc"))
         
+        # Optional: Configure attention mechanism (like ComfyUI's sageattn)
+        attention_mechanism = input_data.get("attention_mechanism", "sageattn")  # Default to sageattn like ComfyUI
+        
+        print(f"Using attention mechanism: {attention_mechanism}", flush=True)
+        print(f"Generating video with prompt: {prompt}", flush=True)
+        print(f"Size: {size}, Frames: {frame_num}, Steps: {sample_steps}, Guide Scale: {sample_guide_scale}", flush=True)
+        
         # Create temporary directory for processing
         with tempfile.TemporaryDirectory() as temp_dir:
             # Handle source video if provided

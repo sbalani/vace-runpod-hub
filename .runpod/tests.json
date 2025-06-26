@@ -21,6 +21,10 @@
           "value": "0"
         },
         {
+          "key": "ATTENTION_MECHANISM",
+          "value": "sageattn"
+        },
+        {
           "key": "PROMPT",
           "value": "A beautiful sunset over mountains"
         },

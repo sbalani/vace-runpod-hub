@@ -49,9 +49,19 @@
           "value": "models"
         },
         {
+          "key": "ATTENTION_MECHANISM",
+          "input": {
+            "name": "Attention Mechanism",
+            "type": "string",
+            "description": "Attention mechanism to use (sageattn recommended for memory efficiency)",
+            "default": "sageattn",
+            "advanced": true
+          }
+        },
+        {
           "key": "PROMPT",
           "input": {
-            "name": "Video Prompt",
+            "name": "Video Description",
             "type": "string",
             "description": "Text description of the video to generate",
             "default": "A beautiful sunset over mountains",
